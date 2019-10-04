@@ -44,12 +44,6 @@
 
 	<div id="canvas"></div>
 
-	<a href="/index.html" title="back to curtains.js website" id="back-to-lib-link" target="_blank">back to curtains.js website</a>
-
-    <div id="debug">
-        Planes actually drawn: <strong id="debug-value">0</strong>
-    </div>
-
 	<div id="page-content">
 
         <div id="content">
@@ -65,7 +59,7 @@
                     <span class="plane-title">Title 1</span>
                     <div class="plane-inner">
                         <div class="plane" data-vs-id="multiple-planes-vs" data-fs-id="multiple-planes-fs">
-                            <img src="/medias/plane-texture-1.jpg" data-sampler="planeTexture" />
+                            <img src="https://source.unsplash.com/1600x900/?architecture,urban" crossOrigin="anonymous" data-sampler="planeTexture" />
                         </div>
                     </div>
                 </div>
@@ -74,7 +68,7 @@
                     <span class="plane-title">Title 2</span>
                     <div class="plane-inner">
                         <div class="plane" data-vs-id="multiple-planes-vs" data-fs-id="multiple-planes-fs">
-                            <img src="/medias/plane-texture-2.jpg" data-sampler="planeTexture" />
+                            <img src="https://source.unsplash.com/1600x900/?architecture,neon" crossOrigin="anonymous" data-sampler="planeTexture" />
                         </div>
                     </div>
                 </div>
@@ -83,7 +77,7 @@
                     <span class="plane-title">Title 3</span>
                     <div class="plane-inner">
                         <div class="plane" data-vs-id="multiple-planes-vs" data-fs-id="multiple-planes-fs">
-                            <img src="/medias/plane-texture-3.jpg" data-sampler="planeTexture" />
+                            <img src="https://source.unsplash.com/1600x900/?architecture,modern" crossOrigin="anonymous" data-sampler="planeTexture" />
                         </div>
                     </div>
                 </div>
@@ -92,7 +86,7 @@
                     <span class="plane-title">Title 4</span>
                     <div class="plane-inner">
                         <div class="plane" data-vs-id="multiple-planes-vs" data-fs-id="multiple-planes-fs">
-                            <img src="/medias/plane-texture-4.jpg" data-sampler="planeTexture" />
+                            <img src="https://source.unsplash.com/1600x900/?architecture,clean" crossOrigin="anonymous" data-sampler="planeTexture" />
                         </div>
                     </div>
                 </div>
@@ -101,7 +95,7 @@
                     <span class="plane-title">Title 5</span>
                     <div class="plane-inner">
                         <div class="plane" data-vs-id="multiple-planes-vs" data-fs-id="multiple-planes-fs">
-                            <img src="/medias/plane-texture-1.jpg" data-sampler="planeTexture" />
+                            <img src="https://source.unsplash.com/1600x900/?architecture,hipster" crossOrigin="anonymous" data-sampler="planeTexture" />
                         </div>
                     </div>
                 </div>
@@ -110,7 +104,7 @@
                     <span class="plane-title">Title 6</span>
                     <div class="plane-inner">
                         <div class="plane" data-vs-id="multiple-planes-vs" data-fs-id="multiple-planes-fs">
-                            <img src="/medias/plane-texture-2.jpg" data-sampler="planeTexture" />
+                            <img src="https://source.unsplash.com/1600x900/?architecture,nature" crossOrigin="anonymous" data-sampler="planeTexture" />
                         </div>
                     </div>
                 </div>
@@ -119,7 +113,7 @@
                     <span class="plane-title">Title 7</span>
                     <div class="plane-inner">
                         <div class="plane" data-vs-id="multiple-planes-vs" data-fs-id="multiple-planes-fs">
-                            <img src="/medias/plane-texture-3.jpg" data-sampler="planeTexture" />
+                            <img src="https://source.unsplash.com/1600x900/?architecture,interesting" crossOrigin="anonymous" data-sampler="planeTexture" />
                         </div>
                     </div>
                 </div>
@@ -128,7 +122,7 @@
                     <span class="plane-title">Title 8</span>
                     <div class="plane-inner">
                         <div class="plane" data-vs-id="multiple-planes-vs" data-fs-id="multiple-planes-fs">
-                            <img src="/medias/plane-texture-4.jpg" data-sampler="planeTexture" />
+                            <img src="https://source.unsplash.com/1600x900/?architecture" crossOrigin="anonymous" data-sampler="planeTexture" />
                         </div>
                     </div>
                 </div>
@@ -158,13 +152,14 @@
 			varying vec2 vTextureMatrixCoord;
 
 			uniform float uScrollEffect;
+			uniform float uTime;
 
 			void main() {
 
 				vec3 vertexPosition = aVertexPosition;
 
 				// cool effect on scroll
-				vertexPosition.x += sin((vertexPosition.y / 1.5 + 1.0) * 3.141592) * (sin(uScrollEffect / 2000.0));
+				vertexPosition.y += 1.5 * cos(vertexPosition.x + uTime / 10.0) * (uScrollEffect / 100.0);
 
 			   	gl_Position = uPMatrix * uMVMatrix * vec4(vertexPosition, 1.0);
 
@@ -182,13 +177,16 @@
 			varying vec2 vTextureCoord;
 			varying vec2 vTextureMatrixCoord;
 
-			uniform sampler2D planeTexture;
+            uniform sampler2D planeTexture;
+            uniform float uScrollEffect;
 
 			void main( void ) {
 				// slides transitions
 				vec4 finalColor = texture2D(planeTexture, vTextureMatrixCoord);
+				float finalColorR = texture2D(planeTexture, vec2(vTextureMatrixCoord.x, vTextureMatrixCoord.y + uScrollEffect * 0.005)).r;
+				float finalColorG = texture2D(planeTexture, vec2(vTextureMatrixCoord.x, vTextureMatrixCoord.y + uScrollEffect * 0.003)).g;
 
-				gl_FragColor = finalColor;
+				gl_FragColor = vec4(finalColorR, finalColorG, finalColor.b, finalColor.a);
 			}
         </script>
 

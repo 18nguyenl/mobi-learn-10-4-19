@@ -31,9 +31,6 @@ window.addEventListener("load", function() {
                 scrollEffect = Math.min(0, scrollEffect + 2);
             }
         }
-
-        // update our number of planes drawn debug value
-        debugElement.innerText = planeDrawn;
     }).onError(function() {
         // we will add a class to the document body to display original images
         document.body.classList.add("no-curtains", "planes-loaded");
@@ -48,14 +45,6 @@ window.addEventListener("load", function() {
 
         // invert value for the effect
         delta.y = -delta.y;
-
-        // threshold
-        if(delta.y > 60) {
-            delta.y = 60;
-        }
-        else if(delta.y < -60) {
-            delta.y = -60;
-        }
 
         if(smoothScroll.isMobile && Math.abs(delta.y) > Math.abs(scrollEffect)) {
             scrollEffect = delta.y;
@@ -93,14 +82,9 @@ window.addEventListener("load", function() {
         }, {passive: true});
     }
 
-    // keep track of the number of plane we're currently drawing
-    var debugElement = document.getElementById("debug-value");
-    // we need to fill the counter with all our planes
-    var planeDrawn = planeElements.length;
-
     // no need for shaders as they were already passed by data attributes
     var params = {
-        widthSegments: 10,
+        widthSegments: 20,
         heightSegments: 10,
         uniforms: {
             scrollEffect: {
@@ -108,6 +92,11 @@ window.addEventListener("load", function() {
                 type: "1f",
                 value: 0,
             },
+            time: {
+                name: "uTime",
+                type: "1f",
+                value: 0,
+            }
         },
     };
 
@@ -140,19 +129,10 @@ window.addEventListener("load", function() {
             // apply new parallax values after resize
             applyPlanesParallax(index);
         }).onRender(function() {
-            // apply the rotation
-            plane.setRotation(0, 0, scrollEffect / 750);
-
             // scale plane and its texture
-            plane.setScale(1, 1 + Math.abs(scrollEffect) / 300);
-            plane.textures[0].setScale(1, 1 + Math.abs(scrollEffect) / 150);
-        }).onReEnterView(function() {
-            // plane is drawn again
-            planeDrawn++;
-        }).onLeaveView(function() {
-            // plane is not drawn anymore
-            planeDrawn--;
-        });
+            // plane.textures[0].setScale(1, 1 + Math.abs(scrollEffect) / 150);
+            plane.uniforms.time.value++;
+        })
     }
 
     function applyPlanesParallax(index) {
